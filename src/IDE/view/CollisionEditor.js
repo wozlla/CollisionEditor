@@ -114,7 +114,12 @@ Ext.define('IDE.view.CollisionEditor', {
                     }, {
                         text: '清除所有 (Ctrl+X)',
                         handler : function() {
-                            me.clearAll();
+                            Ext.Msg.confirm('Confirm', '确定清除?', function(btn) {
+                                if(btn === 'yes' || btn === 'ok') {
+                                    me.clearAll();
+                                }
+                            });
+
                         }
                     }]
                 }],
