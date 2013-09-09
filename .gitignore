@@ -1,7 +1,7 @@
 
-src/CollisionEditor_Windows.zip
-
-src/CollisionEditor_OSX.nw
-
 .idea
 node-webkit.app
+
+CollisionEditor_OSX.nw
+
+CollisionEditor_windows.zip
