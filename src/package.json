@@ -1,0 +1,10 @@
+{
+    "name": "Wozlla Collision Editor",
+    "main": "index.html",
+    "window": {
+        "title" : "Wozlla Collision Editor",
+        "toolbar": true,
+        "width": 660,
+        "height": 500
+    }
+}
