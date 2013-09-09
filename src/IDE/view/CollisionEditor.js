@@ -139,7 +139,7 @@ Ext.define('IDE.view.CollisionEditor', {
                             var lastPos;
 
                             canvas.addEventListener('mousedown', function(e) {
-                                movePoint = me.getClickedPoint(e.offsetX-me.imageOffset.x, e.offsetY-me.imageOffset.y);
+                                movePoint = me.getPointByXY(e.offsetX-me.imageOffset.x, e.offsetY-me.imageOffset.y);
                                 mouseDown = true;
                                 lastPos = {
                                     x : e.offsetX,
@@ -172,6 +172,25 @@ Ext.define('IDE.view.CollisionEditor', {
 
                             canvas.addEventListener('dblclick', function(e) {
                                 me.dblclickImagePosition(e.offsetX-me.imageOffset.x, e.offsetY-me.imageOffset.y);
+                            });
+
+                            canvas.addEventListener('contextmenu', function(e) {
+                                var point = me.getPointByXY(e.offsetX-me.imageOffset.x, e.offsetY-me.imageOffset.y);
+                                if(point) {
+                                    Ext.create('Ext.menu.Menu', {
+                                        items : [{
+                                            text : '插入一个点',
+                                            handler : function() {
+                                                me.insertPointAt(point);
+                                            }
+                                        }, {
+                                            text : '删除该点',
+                                            handler : function() {
+                                                me.deletePoint(point);
+                                            }
+                                        }]
+                                    }).showAt(e.pageX, e.pageY);
+                                }
                             });
                         },
                         resize : function(component, width, height) {
@@ -253,7 +272,7 @@ Ext.define('IDE.view.CollisionEditor', {
         }
     },
 
-    getClickedPoint : function(x, y) {
+    getPointByXY : function(x, y) {
         var currentStack = this.stacks[this.currentStackColor];
         if(currentStack) {
             for(var i=0; i<currentStack.length; i++) {
@@ -267,6 +286,38 @@ Ext.define('IDE.view.CollisionEditor', {
             }
         }
         return null;
+    },
+
+    deletePoint : function(point) {
+        var currentStack = this.stacks[this.currentStackColor];
+        if(currentStack) {
+            for(var i=0; i<currentStack.length; i++) {
+                var p = currentStack[i];
+                if(p === point) {
+                    currentStack.splice(i, 1);
+                    this.redrawStack();
+                    return;
+                }
+            }
+        }
+    },
+
+    insertPointAt : function(point) {
+        var currentStack = this.stacks[this.currentStackColor];
+        var newPoint = {
+            x : point.x - 10,
+            y : point.y - 10
+        };
+        if(currentStack) {
+            for(var i=0; i<currentStack.length; i++) {
+                var p = currentStack[i];
+                if(p === point) {
+                    currentStack.splice(i, 0, newPoint);
+                    this.redrawStack();
+                    return;
+                }
+            }
+        }
     },
 
     clearAll : function() {
