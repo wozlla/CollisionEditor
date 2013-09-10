@@ -267,7 +267,10 @@ Ext.define('IDE.view.CollisionEditor', {
         } else {
             IDE.base.FileDialog.open(true, function(file) {
                 if(!file) return;
-                fs.writeFileSync(file, JSON.stringify(stack, null, "\t"));
+                console.log(file);
+                fs.writeFile(file, JSON.stringify(stack, null, "\t"), function(err) {
+                    console.log(err);
+                });
             });
         }
     },

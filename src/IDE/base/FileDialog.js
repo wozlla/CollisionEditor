@@ -18,8 +18,11 @@ Ext.define('IDE.base.FileDialog', {
         if(!this.init) {
             fileChooser.addEventListener('change', function() {
                 var dir = fileChooser.value;
-                me.callback && me.callback(dir);
-                me.callback = null;
+                if(dir) {
+                    me.callback && me.callback(dir);
+                    me.callback = null;
+                }
+                fileChooser.value = '';
             });
             this.init = true;
         }
