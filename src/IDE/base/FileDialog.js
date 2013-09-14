@@ -2,8 +2,6 @@ Ext.define('IDE.base.FileDialog', {
 
     singleton : true,
 
-    init : false,
-
     callback : null,
 
     open : function(saveAs, callback) {
@@ -15,16 +13,17 @@ Ext.define('IDE.base.FileDialog', {
         this.callback = callback;
         var fileChooser = document.getElementById(saveAs ? 'saveFileAsChooser' : 'fileChooser');
         fileChooser.click();
-        if(!this.init) {
+        if(!fileChooser.inited) {
+            fileChooser.inited = true;
             fileChooser.addEventListener('change', function() {
                 var dir = fileChooser.value;
+                console.log('change', dir);
                 if(dir) {
                     me.callback && me.callback(dir);
                     me.callback = null;
                 }
                 fileChooser.value = '';
             });
-            this.init = true;
         }
     }
 });
