@@ -17,6 +17,8 @@ Ext.define('IDE.view.CollisionEditor', {
 
     stacks : {},
 
+    mesh : {},
+
     initComponent : function() {
 
         var me = this;
@@ -44,6 +46,16 @@ Ext.define('IDE.view.CollisionEditor', {
                         text: '导出当前分组 (Ctrl+S)',
                         handler : function() {
                             me.exportData();
+                        }
+                    }, {
+                        text: '构建网格',
+                        handler : function() {
+                            me.buildMesh();
+                        }
+                    }, {
+                        text : '导出网络',
+                        handler : function() {
+                            me.exportMesh();
                         }
                     }, {
                         xtype : 'tbspacer'
@@ -275,6 +287,52 @@ Ext.define('IDE.view.CollisionEditor', {
         }
     },
 
+    buildMesh : function() {
+        var me = this;
+        var stack = me.stacks[me.currentStackColor];
+        if(!stack) {
+            Ext.Msg.alert('Warn', '当前分组没有数据!');
+        } else {
+            me.mesh[me.currentStackColor] = new navmesh.Path(stack);
+            me.redrawStack();
+        }
+    },
+
+    exportMesh : function() {
+        var mesh = this.mesh[this.currentStackColor];
+        if(!mesh) {
+            Ext.Msg.alert('Warn', '当前分组没有数据!');
+        } else {
+            var i, len, trg;
+            var triangleV = mesh.triangleV;
+            var triangleVData = [];
+            for (i=0, len=triangleV.length; i<len; i++) {
+                trg = triangleV[i];
+                triangleVData.push({
+                    a : {
+                        x : trg.pointA.x,
+                        y : trg.pointA.y
+                    },
+                    b : {
+                        x : trg.pointB.x,
+                        y : trg.pointB.y
+                    },
+                    c : {
+                        x : trg.pointC.x,
+                        y : trg.pointC.y
+                    }
+                });
+            }
+            IDE.base.FileDialog.open(true, function(file) {
+                if(!file) return;
+                console.log(file);
+                fs.writeFile(file, JSON.stringify(triangleVData, null, "\t"), function(err) {
+                    console.log(err);
+                });
+            });
+        }
+    },
+
     getPointByXY : function(x, y) {
         var currentStack = this.stacks[this.currentStackColor];
         if(currentStack) {
@@ -413,6 +471,10 @@ Ext.define('IDE.view.CollisionEditor', {
                         ctx.moveTo(first.x, first.y);
                     }
                 }
+            }
+            var path = this.mesh[name];
+            if(path) {
+                path.draw(ctx);
             }
             ctx.stroke();
 
