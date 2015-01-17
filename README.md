@@ -2,7 +2,7 @@
 
 CollisionEditor is a navigation mesh Editor, Running on node-webkit.
 
-![CollisionEditor](screenshot.png width=500px)
+![CollisionEditor](screenshot.jpg width=500px)
 
 
 ##Features
