@@ -457,6 +457,24 @@ Ext.define('IDE.view.CollisionEditor', {
             ctx.strokeStyle = this.getStackColor(name);
             ctx.lineWidth = 4;
             var first = stack[0];
+			var vel = {
+				start : first,
+				end : null,
+				x : 0,
+				y : 0,
+				normalize : function() {
+					var v = this;
+					v.x = v.end.x - v.start.x;
+					v.y = v.end.y - v.start.y;
+					var len = Math.sqrt(v.x * v.x + v.y * v.y);
+					if (len <= Number.MIN_VALUE) {
+						return 0.0;
+					}
+					var invL = 1.0 / len;
+					v.x *= invL;
+					v.y *= invL;
+				}
+			};
             ctx.beginPath();
             ctx.moveTo(first.x, first.y);
             for(i=1; i<stack.length; i++) {
@@ -464,7 +482,6 @@ Ext.define('IDE.view.CollisionEditor', {
                     ctx.lineTo(stack[i].x, stack[i].y);
                 } else {
                     ctx.lineTo(first.x, first.y);
-                    ctx.stroke();
                     i++;
                     first = stack[i];
                     if(first) {
@@ -483,8 +500,12 @@ Ext.define('IDE.view.CollisionEditor', {
                 if(stack[i] === 'combine') {
                     continue;
                 }
+				ctx.fillStyle = 'yellow';
                 ctx.fillRect(stack[i].x-5, stack[i].y-5, 10, 10);
+				ctx.fillStyle= 'black';
+				ctx.fillText(i+'', stack[i].x, stack[i].y);
             }
+
         }
         ctx.restore();
     }
